@@ -181,6 +181,60 @@ app.post('/reject', (req, res) => {
     });
 });
 
+app.post('/reschedule', async (req, res) => {
+    const { appointmentId, name, email, phone, department, doctorName, date, time } = req.body;
+
+    const mailOptions = {
+        from: 'sijgeriaucssangha@gmail.com',
+        to: email,
+        subject: 'Appointment Rescheduled',
+        html: `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                <h2 style="color: #2e6c80;">Dear ${name},</h2>
+                <p>Your appointment has been <span style="color: #008000;">rescheduled</span>, as you did not come in your scheduled time and date. don't miss the next date please. Here are the updated details:</p>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #dddddd;">Name:</td>
+                        <td style="padding: 8px; border: 1px solid #dddddd;">${name}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #dddddd;">Phone Number:</td>
+                        <td style="padding: 8px; border: 1px solid #dddddd;">${phone}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #dddddd;">Department:</td>
+                        <td style="padding: 8px; border: 1px solid #dddddd;">${department}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #dddddd;">Doctor:</td>
+                        <td style="padding: 8px; border: 1px solid #dddddd;">${doctorName}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #dddddd;">Date:</td>
+                        <td style="padding: 8px; border: 1px solid #dddddd;">${date}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #dddddd;">Time:</td>
+                        <td style="padding: 8px; border: 1px solid #dddddd;">${time}</td>
+                    </tr>
+                </table>
+                <p>Thank you for your understanding.</p>
+                <p>Best regards,<br>Sijgeria HMS</p>
+            </div>
+        `
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log(error);
+            res.status(500).send('Error sending email');
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.status(200).send('Appointment rescheduled and email sent');
+        }
+    });
+});
+
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
